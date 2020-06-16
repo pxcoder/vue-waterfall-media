@@ -5771,4 +5771,3 @@ module.exports = global.Promise;
 
 /******/ });
 });
-//# sourceMappingURL=waterfall.umd.js.map
