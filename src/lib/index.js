@@ -1,1 +1,1 @@
-export default './vue-waterfall-media.vue';
+module.exports = require('./vue-waterfall-media.vue');
