@@ -96,7 +96,9 @@ export default {
     },
     watch: {
         list() {
-            this.calcPosition();
+            this.$nextTick(() => {
+                this.calcPosition();
+            });
         },
     },
     mounted() {
@@ -110,7 +112,6 @@ export default {
     },
     methods: {
         async calcPosition() {
-            await this.$nextTick();
             /* 容器元素 */
             const containerEle = this.$refs.waterfallContainer;
             /* 容器宽度 */
@@ -206,10 +207,6 @@ export default {
         debounceWindowResize: debounce(function() {
             this.calcPosition();
         }, self.resizeInterval),
-        /* 加载更多 */
-        loadMore() {
-            this.$emit('more');
-        },
     },
 };
 </script>
