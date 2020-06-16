@@ -1,14 +1,13 @@
 {
     "name": "vue-waterfall-media",
-    "version": "1.2.3",
+    "version": "1.2.4",
     "author": "pxcoder",
     "private": false,
     "license": "MIT",
     "files": [
-        "dist",
         "src"
     ],
-    "main": "./dist/waterfall.common.js",
+    "main": "./src/lib/index.js",
     "repository": {
         "type": "git",
         "url": "https://github.com/pxcoder/vue-waterfall-media.git"
