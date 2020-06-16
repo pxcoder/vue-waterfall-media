@@ -4,15 +4,11 @@
 
 只需简单配置，即可实现响应式瀑布流，并且无需设置高度。
 
-
-
 ## 安装
 
 ```shell
 npm i vue-waterfall-media -S
 ```
-
-
 
 ## 使用
 
@@ -39,8 +35,10 @@ npm i vue-waterfall-media -S
     </div>
 </template>
 <script>
+import YorkbbsWaterfall from 'vue-waterfall-media';
 export default {
     name: 'Home',
+    components: { YorkbbsWaterfall },
     data() {
         return {
             goodsList: [],
@@ -122,8 +120,6 @@ export default {
 </style>
 ```
 
-
-
 ## 属性 props
 
 | 参数             | 类型   | 说明                                      |
@@ -137,8 +133,6 @@ export default {
 | resizeInterval   | Number | 重置窗口防抖时间间隔，默认值 300ms        |
 | toupperInterval  | Number | 上拉加载防抖时间间隔，默认值 500ms        |
 
-
-
 ### media 属性默认值
 
 ```js
@@ -150,11 +144,9 @@ export default {
     /* 768px < 容器宽度 ≤ 992px 显示 4 列，列间距 20px */
     992: { column: 4, gutter: 20 },
     /* 992px < 容器宽度 ≤ 1200px 显示 5 列，列间距 20px */
-    1200: { column: 5, gutter: 20 },  
+    1200: { column: 5, gutter: 20 },
 }
 ```
-
-
 
 ## 事件 events
 
@@ -162,13 +154,10 @@ export default {
 | ------------- | --------------------------------------------------- |
 | scrolltoupper | 只有 scrolltoupper 回调函数定义时，才会触发上拉加载 |
 
-
-
 ## 插槽 slot
 
-| 插槽名  | 说明                                                         |
-| ------- | ------------------------------------------------------------ |
-| default | 默认插槽，插槽内的元素将会被遍历渲染，参数为 { data },  data 为当前列表项数据，data.index 为当前列表项索引 |
-| header  | 头部插槽                                                     |
-| footer  | 尾部插槽                                                     |
-
+| 插槽名  | 说明                                                                                                      |
+| ------- | --------------------------------------------------------------------------------------------------------- |
+| default | 默认插槽，插槽内的元素将会被遍历渲染，参数为 { data }, data 为当前列表项数据，data.index 为当前列表项索引 |
+| header  | 头部插槽                                                                                                  |
+| footer  | 尾部插槽                                                                                                  |
