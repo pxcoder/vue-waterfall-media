@@ -15,7 +15,7 @@
     </div>
 </template>
 <script>
-import debounce from '../utils/debounce';
+import debounce from './utils/debounce';
 export default {
     name: 'VueWaterfallMedia',
     props: {

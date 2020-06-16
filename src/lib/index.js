@@ -1,1 +1,2 @@
-module.exports = require('./vue-waterfall-media.vue');
+import VueWaterfallMedia from './vue-waterfall-media.vue';
+export default VueWaterfallMedia;
