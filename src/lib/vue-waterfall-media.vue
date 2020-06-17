@@ -112,6 +112,11 @@ export default {
     },
     methods: {
         async calcPosition() {
+        	/* 数据为空 重置容器高度 */
+        	if(this.list.length === 0 ){
+        		 this.containerHeight = '0px';
+        		 return;
+        	}        	
             /* 容器元素 */
             const containerEle = this.$refs.waterfallContainer;
             /* 容器宽度 */
