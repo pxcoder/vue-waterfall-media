@@ -78,7 +78,6 @@ export default {
         },
     },
     data() {
-        var self = this;
         return {
             /* 列宽 */
             columnWidth: 0,
@@ -112,11 +111,11 @@ export default {
     },
     methods: {
         async calcPosition() {
-        	/* 数据为空 重置容器高度 */
-        	if(this.list.length === 0 ){
-        		 this.containerHeight = '0px';
-        		 return;
-        	}        	
+            /* 数据为空 重置容器高度 */
+            if (this.list.length === 0) {
+                this.containerHeight = '0px';
+                return;
+            }
             /* 容器元素 */
             const containerEle = this.$refs.waterfallContainer;
             /* 容器宽度 */
@@ -205,13 +204,13 @@ export default {
             }
         },
         /* 触底事件防抖 */
-        debounceReachBottom: debounce(function() {
-            this.reachBottom();
-        }, self.toupperInterval),
+        debounceReachBottom() {
+            debounce(this.reachBottom, this.toupperInterval);
+        },
         /* 窗口重置防抖 */
-        debounceWindowResize: debounce(function() {
-            this.calcPosition();
-        }, self.resizeInterval),
+        debounceWindowResize() {
+            debounce(this.calcPosition, this.resizeInterval);
+        },
     },
 };
 </script>

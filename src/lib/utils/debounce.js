@@ -1,12 +1,9 @@
-function debounce(func, wait) {
+export default (function () {
     let timeout = null;
-
-    return function() {
+    return function (func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
             func.apply(this, arguments);
         }, wait);
     };
-}
-
-export default debounce;
+})();
