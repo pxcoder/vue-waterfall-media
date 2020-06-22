@@ -95,9 +95,7 @@ export default {
     },
     watch: {
         list() {
-            this.$nextTick(() => {
-                this.calcPosition();
-            });
+            this.calcPosition();
         },
     },
     mounted() {
@@ -111,6 +109,8 @@ export default {
     },
     methods: {
         async calcPosition() {
+            await this.$nextTick();
+
             /* 数据为空 重置容器高度 */
             if (this.list.length === 0) {
                 this.containerHeight = '0px';
