@@ -1,6 +1,6 @@
 {
     "name": "vue-waterfall-media",
-    "version": "1.4.3",
+    "version": "1.4.4",
     "author": "pxcoder",
     "private": false,
     "license": "MIT",
@@ -14,10 +14,6 @@
     },
     "scripts": {
         "build": "vue-cli-service build --target lib --name waterfall src/lib/index.js"
-    },
-    "dependencies": {
-        "core-js": "^3.6.5",
-        "vue": "^2.6.11"
     },
     "devDependencies": {
         "@vue/cli-plugin-babel": "^4.4.0",

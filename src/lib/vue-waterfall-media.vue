@@ -205,11 +205,11 @@ export default {
         },
         /* 触底事件防抖 */
         debounceReachBottom() {
-            debounce(this.reachBottom, this.toupperInterval);
+            debounce(this.$options.methods.reachBottom, this.toupperInterval);
         },
         /* 窗口重置防抖 */
         debounceWindowResize() {
-            debounce(this.calcPosition, this.resizeInterval);
+            debounce(this.$options.methods.calcPosition, this.resizeInterval);
         },
     },
 };
