@@ -152,54 +152,46 @@ export default {
                 columnHeightArr.push(0);
             }
 
-            const coverImageEles = containerEle.getElementsByClassName(this.imageClass);
-
-            let promiseList = [];
-
-            for (const item of coverImageEles) {
-                if (!item.complete) {
-                    promiseList.push(
-                        new Promise(resolve => {
-                            item.onload = item.onerror = () => {
-                                resolve(item);
-                            };
-                        }),
-                    );
-                }
-            }
-
-            await Promise.all(promiseList);
-
-            this.$emit('images-loaded');
-
             const waterfallItemEles = containerEle.getElementsByClassName('waterfall-item');
 
             for (const item of waterfallItemEles) {
-                const minColumnHeight = columnHeightArr
-                    .slice(0)
-                    .sort((a, b) => a - b)
-                    .shift();
+                const imageEle = item.getElementsByClassName(this.imageClass)[0];
 
-                const index = columnHeightArr.indexOf(minColumnHeight);
-
-                item.style.left = `${(columnWidth + gutter) * index}px`;
-                item.style.top = `${minColumnHeight}px`;
-                item.style.visibility = 'visible';
-
-                columnHeightArr[index] += item.offsetHeight;
-
-                const maxColumnHeight = columnHeightArr
-                    .slice(0)
-                    .sort((a, b) => a - b)
-                    .pop();
-                this.containerHeight = `${maxColumnHeight}px`;
+                if (imageEle.complete) {
+                    this.calcItemHeight(item, columnHeightArr);
+                } else {
+                    imageEle.onload = item.onerror = () => {
+                        this.calcItemHeight(item, columnHeightArr);
+                    };
+                }
             }
+        },
+        /* 计算列表项高度 */
+        calcItemHeight(itemEle, columnHeightArr) {
+            const minColumnHeight = columnHeightArr
+                .slice(0)
+                .sort((a, b) => a - b)
+                .shift();
+
+            const index = columnHeightArr.indexOf(minColumnHeight);
+
+            itemEle.style.left = `${(this.columnWidth + this.gutter) * index}px`;
+            itemEle.style.top = `${minColumnHeight}px`;
+            itemEle.style.visibility = 'visible';
+
+            columnHeightArr[index] += itemEle.offsetHeight;
+
+            const maxColumnHeight = columnHeightArr
+                .slice(0)
+                .sort((a, b) => a - b)
+                .pop();
+            this.containerHeight = `${maxColumnHeight}px`;
         },
         /* 触底事件 */
         reachBottom() {
             const clientHeight = document.documentElement.clientHeight;
             const scrollHeight = document.body.scrollHeight;
-            const scrollTop = document.documentElement.scrollTop;
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
 
             if (scrollHeight - clientHeight - scrollTop <= this.toupperThreshold) {
                 this.$emit('scrolltoupper');
@@ -223,7 +215,7 @@ export default {
 .waterfall-item {
     position: absolute;
     left: 50%;
-    top: 50%;
+    top: 100%;
     visibility: hidden;
 }
 .waterfall-load-more {
