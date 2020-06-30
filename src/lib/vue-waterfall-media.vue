@@ -170,6 +170,8 @@ export default {
 
             await Promise.all(promiseList);
 
+            this.$emit('images-loaded');
+
             const waterfallItemEles = containerEle.getElementsByClassName('waterfall-item');
 
             for (const item of waterfallItemEles) {
