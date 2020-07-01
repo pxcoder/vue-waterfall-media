@@ -156,14 +156,23 @@ export default {
 
             for (const item of waterfallItemEles) {
                 const imageEle = item.getElementsByClassName(this.imageClass)[0];
+                if (!imageEle) {
+                    this.calcItemHeight(item, columnHeightArr);
+                    continue;
+                }
 
                 if (imageEle.complete) {
                     this.calcItemHeight(item, columnHeightArr);
-                } else {
-                    imageEle.onload = item.onerror = () => {
-                        this.calcItemHeight(item, columnHeightArr);
-                    };
+                    continue;
                 }
+
+                const imagePromise = new Promise(resolve => {
+                    imageEle.onload = imageEle.onerror = () => {
+                        resolve();
+                    };
+                });
+                await imagePromise;
+                this.calcItemHeight(item, columnHeightArr);
             }
         },
         /* 计算列表项高度 */
