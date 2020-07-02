@@ -4,6 +4,8 @@
 
 只需简单配置，即可实现响应式瀑布流，并且无需设置高度。
 
+
+
 ## 安装
 
 ```shell
@@ -125,7 +127,6 @@ export default {
 | 参数             | 类型   | 说明                                      |
 | ---------------- | ------ | ----------------------------------------- |
 | list             | Array  | 数据列表，必填                            |
-| imageClass       | String | 图片类名，默认值 `cover-iamge`            |
 | media            | Object | 媒体查询，默认值见下方                    |
 | defalutColumn    | Number | 超出媒体查询范围时的列数，默认值 5 列     |
 | defaultGutter    | Number | 超出媒体查询范围时的列间隙，默认值 20px   |
@@ -161,3 +162,4 @@ export default {
 | default | 默认插槽，插槽内的元素将会被遍历渲染，参数为 { data }, data 为当前列表项数据，data.index 为当前列表项索引 |
 | header  | 头部插槽                                                                                                  |
 | footer  | 尾部插槽                                                                                                  |
+

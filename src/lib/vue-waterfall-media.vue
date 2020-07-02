@@ -15,7 +15,8 @@
     </div>
 </template>
 <script>
-import debounce from './utils/debounce';
+import debounce from './utils/debounce.js';
+var columnHeights = []; /* 每列列表的高度 */
 export default {
     name: 'VueWaterfallMedia',
     props: {
@@ -23,11 +24,6 @@ export default {
         list: {
             type: Array,
             required: true,
-        },
-        /* 图片类名 */
-        imageClass: {
-            type: String,
-            default: 'cover-image',
         },
         /* 超出媒体查询时显示的列数 */
         defalutColumn: {
@@ -79,18 +75,8 @@ export default {
     },
     data() {
         return {
-            /* 列宽 */
-            columnWidth: 0,
-            /* 列数 */
-            column: 0,
-            /* 列宽 */
-            gutter: 0,
-            /* 上拉加载计时器对象 */
-            scrolltoupperTimer: null,
-            /* 窗口重置计时器对象 */
-            windowResizeTimer: null,
-            /* 容器高度 */
-            containerHeight: 0,
+            columnWidth: 0 /* 列宽 */,
+            containerHeight: 0 /* 容器高度 */,
         };
     },
     watch: {
@@ -116,20 +102,60 @@ export default {
                 this.containerHeight = '0px';
                 return;
             }
+
             /* 容器元素 */
             const containerEle = this.$refs.waterfallContainer;
             /* 容器宽度 */
             const containerWidth = containerEle.clientWidth;
+            /* 获取列宽和列间距 */
+            const { column, gutter } = this.getColumnGutter(containerWidth);
+            /* 列宽 */
+            let columnWidth = Math.floor((containerWidth - (column - 1) * gutter) / column);
+            this.columnWidth = columnWidth;
 
-            /* 列数 */
-            let column = this.defalutColumn;
-            /* 列间距 */
-            let gutter = this.defaultGutter;
+            /* 初始化每列列高 */
+            if (columnHeights.length === 0) {
+                for (let i = 0; i < column; i++) {
+                    columnHeights.push(0);
+                }
+            }
 
+            /* 获取所有未加载过的列表项元素 */
+            const waterfallItemEles = containerEle.querySelectorAll('.waterfall-item:not([loaded])');
+
+            for (const itemEle of waterfallItemEles) {
+                const imageEles = itemEle.getElementsByTagName('img');
+
+                /* 没有图片的情况 */
+                if (imageEles.length === 0) {
+                    this.calcItemHeight(itemEle, columnHeights);
+                    continue;
+                }
+
+                /* 列表项内的图片全部加载完成 */
+                this.handleImagesLoaded(imageEles).then(() => {
+                    const minColumnHeight = this.getMinColumnHeight();
+                    const columnIndex = columnHeights.indexOf(minColumnHeight);
+
+                    itemEle.style.left = `${(columnWidth + gutter) * columnIndex}px`;
+                    itemEle.style.top = `${minColumnHeight}px`;
+                    itemEle.style.visibility = 'visible';
+                    itemEle.setAttribute('loaded', true);
+
+                    columnHeights[columnIndex] += itemEle.offsetHeight;
+
+                    const maxColumnHeight = this.getMaxColumnHeight();
+                    this.containerHeight = `${maxColumnHeight}px`;
+                });
+            }
+        },
+        /* 获取实际列数和列间距 */
+        getColumnGutter(containerWidth) {
+            let column = this.defalutColumn; /* 列数 */
+            let gutter = this.defaultGutter; /* 列间距 */
             const sizeArr = Object.keys(this.media)
                 .map(size => Number(size))
                 .sort((a, b) => a - b);
-
             /* 根据 media 从小→大 进行匹配 */
             for (const size of sizeArr) {
                 if (containerWidth <= size) {
@@ -138,63 +164,42 @@ export default {
                     break;
                 }
             }
-
-            /* 列宽 */
-            let columnWidth = Math.floor((containerWidth - (column - 1) * gutter) / column);
-
-            this.column = column;
-            this.gutter = gutter;
-            this.columnWidth = columnWidth;
-
-            /* 列高度 */
-            let columnHeightArr = [];
-            for (let i = 0; i < column; i++) {
-                columnHeightArr.push(0);
-            }
-
-            const waterfallItemEles = containerEle.getElementsByClassName('waterfall-item');
-
-            for (const item of waterfallItemEles) {
-                const imageEle = item.getElementsByClassName(this.imageClass)[0];
-                if (!imageEle) {
-                    this.calcItemHeight(item, columnHeightArr);
-                    continue;
-                }
-
-                if (imageEle.complete) {
-                    this.calcItemHeight(item, columnHeightArr);
-                    continue;
-                }
-
-                const imagePromise = new Promise(resolve => {
-                    imageEle.onload = imageEle.onerror = () => {
-                        resolve();
-                    };
-                });
-                await imagePromise;
-                this.calcItemHeight(item, columnHeightArr);
-            }
+            return { column, gutter };
         },
-        /* 计算列表项高度 */
-        calcItemHeight(itemEle, columnHeightArr) {
-            const minColumnHeight = columnHeightArr
-                .slice(0)
-                .sort((a, b) => a - b)
-                .shift();
-
-            const index = columnHeightArr.indexOf(minColumnHeight);
-
-            itemEle.style.left = `${(this.columnWidth + this.gutter) * index}px`;
-            itemEle.style.top = `${minColumnHeight}px`;
-            itemEle.style.visibility = 'visible';
-
-            columnHeightArr[index] += itemEle.offsetHeight;
-
-            const maxColumnHeight = columnHeightArr
+        /* 处理图片列表加载 */
+        handleImagesLoaded(imageEles) {
+            const imagePromises = [];
+            for (let imageEle of imageEles) {
+                imagePromises.push(
+                    new Promise(resolve => {
+                        if (imageEle.complete) {
+                            resolve();
+                        }
+                        imageEle.onload = () => {
+                            resolve();
+                        };
+                        imageEle.onerror = () => {
+                            imageEle.style.display = 'none';
+                            resolve();
+                        };
+                    }),
+                );
+            }
+            return Promise.all(imagePromises);
+        },
+        /* 获取最大列高度 */
+        getMaxColumnHeight() {
+            return columnHeights
                 .slice(0)
                 .sort((a, b) => a - b)
                 .pop();
-            this.containerHeight = `${maxColumnHeight}px`;
+        },
+        /* 获取最小列高度 */
+        getMinColumnHeight() {
+            return columnHeights
+                .slice(0)
+                .sort((a, b) => a - b)
+                .shift();
         },
         /* 触底事件 */
         reachBottom() {
